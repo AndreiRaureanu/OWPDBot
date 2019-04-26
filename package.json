@@ -13,8 +13,17 @@
     "discord.js": "^11.4.2",
     "discord.js-commando": "^0.10.0",
     "eslint": "^5.16.0",
-    "node-gyp": "^4.0.0"
+    "node-gyp": "^4.0.0",
+    "request": "^2.88.0"
   },
   "devDependencies": {},
-  "description": ""
+  "description": "A leaderboard bot for OWPD",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RaureanuAndrei/OWPDBot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RaureanuAndrei/OWPDBot/issues"
+  },
+  "homepage": "https://github.com/RaureanuAndrei/OWPDBot#readme"
 }
