@@ -49,31 +49,36 @@ module.exports = class AddCommand extends Command {
 
         function callback(error, response, body) {
             body = JSON.parse(body);
-            if (body.mgs == "profile not found") {
-                sendErrorResponse(msg, "No profile found with specified battletag.");
-            }
-            if (body.error == "Private") {
-                return msg.say("Private profile, please make your career profile public, wait a few minutes and try again.")
-            }
-            if(body.eu.stats.competitive.overall_stats.comprank === null) {
-                return msg.say("Your account is unplaced. Please finish your placements and then try again.");
-            }
-            console.log(body);
-            console.log(body.eu.stats.competitive.overall_stats.comprank)
+            if (body.msg == "profile not found") {
+                sendErrorResponse(msg, "No profile found with specified Battletag!");
+            } else if (body.error == "Private") {
+                sendErrorResponse(msg, "Private profile, please make your career profile public, wait a few minutes and try again.");
+            } else if (body.error == 500) {
+                sendErrorResponse(msg, "An unknown error occurred with the Overwatch API. Maybe tell someone about this...")
+            } else if (!body.hasOwnProperty("eu") && body.eu.stats.competitive.overall_stats.comprank === null) {
+                sendErrorResponse(msg, "Your account is unplaced. Please finish your placements and then try again.");
+            } else {
+                var leaderboard = getLeaderboard.get(member.user.id);
+                if (!leaderboard) {
+                    leaderboard = {
+                        id: member.user.id,
+                        user: member.user.id,
+                        battletag: battletag,
+                        sr: 0,
+                        flag: `:map:`,
+                        nickname: `default`
+                    }
+                }
 
-
-            var leaderboard = getLeaderboard.get(member.user.id);
-            if(!leaderboard) {
-                leaderboard = {id: member.user.id, user: member.user.id, battletag: battletag, sr: 0, flag: `:map:`, nickname: `default`}
+                leaderboard.sr = body.eu.stats.competitive.overall_stats.comprank;
+                setLeaderboard.run(leaderboard);
+                // need to return something btw
+                msg.channel.stopTyping();
+                return msg.say(`shit works i guess`);
             }
-    
-            leaderboard.sr = body.eu.stats.competitive.overall_stats.comprank;
-            setLeaderboard.run(leaderboard);
-            // need to return something btw
-            return msg.say(`shit works i guess`);
         }
         request(options, callback);
-        
+
         // var leaderboard = getLeaderboard.get(member.user.id);
         // if(!leaderboard) {
         //     leaderboard = {id: member.user.id, user: member.user.id, battletag: battletag, sr: 0, flag: `:map:`, nickname: `default`}
@@ -84,11 +89,14 @@ module.exports = class AddCommand extends Command {
         // // need to return something btw
         // return msg.say(`shit works i guess`);
         function sendErrorResponse(msg, text) {
-            msg.channel.send({embed: {
-                color: 3447003,
-                title: "An error occured!",
-                description: text
-            }
+            msg.channel.send({
+                embed: {
+                    color: 12663868,
+                    title: "An error occured!",
+                    description: text
+                }
+            })
+            msg.channel.stopTyping();
         }
     }
 }
