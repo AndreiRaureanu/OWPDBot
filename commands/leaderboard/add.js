@@ -28,9 +28,9 @@ module.exports = class AddCommand extends Command {
         });
     }
 
-    run(msg, { member, battletag }) {
-        setLeaderboard = sql.prepare("INSERT OR REPLACE INTO leaderboard (id, user, battletag, sr, flag, nickname) VALUES (@id, @user, @battletag, @sr, @flag, @nickname);");
-        getLeaderboard = sql.prepare("SELECT * FROM leaderboard WHERE user = ?")
+    async run(msg, { member, battletag }) {
+        var setLeaderboard = sql.prepare("INSERT OR REPLACE INTO leaderboard (id, user, battletag, sr, flag, nickname) VALUES (@id, @user, @battletag, @sr, @flag, @nickname);");
+        var getLeaderboard = sql.prepare("SELECT * FROM leaderboard WHERE user = ?")
         //first check if its valid battletag format through regex
         var test4Characters = RegExp('/.*#[0-9]{4}');
         var test5Characters = RegExp('/.*#[0-9]{5}');
@@ -61,17 +61,27 @@ module.exports = class AddCommand extends Command {
             console.log(body);
             console.log(body.eu.stats.competitive.overall_stats.comprank)
 
+
+            var leaderboard = getLeaderboard.get(member.user.id);
+            if(!leaderboard) {
+                leaderboard = {id: member.user.id, user: member.user.id, battletag: battletag, sr: 0, flag: `:map:`, nickname: `default`}
+            }
+    
+            leaderboard.sr = body.eu.stats.competitive.overall_stats.comprank;
+            setLeaderboard.run(leaderboard);
+            // need to return something btw
+            return msg.say(`shit works i guess`);
         }
         request(options, callback);
         
-        var leaderboard = getLeaderboard.get(member.user.id);
-        if(!leaderboard) {
-            leaderboard = {id: member.user.id, user: member.user.id, battletag: battletag, sr: 0, flag: `:map:`, nickname: `default`}
-        }
+        // var leaderboard = getLeaderboard.get(member.user.id);
+        // if(!leaderboard) {
+        //     leaderboard = {id: member.user.id, user: member.user.id, battletag: battletag, sr: 0, flag: `:map:`, nickname: `default`}
+        // }
 
-        leaderboard.sr = body.eu.stats.competitive.overall_stats.comprank;
-        setLeaderboard.run(leaderboard);
-        // need to return something btw
-        return msg.say(`shit works i guess`);
+        // leaderboard.sr = body.eu.stats.competitive.overall_stats.comprank;
+        // setLeaderboard.run(leaderboard);
+        // // need to return something btw
+        // return msg.say(`shit works i guess`);
     }
 }
