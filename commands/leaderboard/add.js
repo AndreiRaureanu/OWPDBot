@@ -54,7 +54,8 @@ module.exports = class AddCommand extends Command {
             } else if (body.error == "Private") {
                 sendErrorResponse(msg, "Private profile, please make your career profile public, wait a few minutes and try again.");
             } else if (body.error == 500) {
-                sendErrorResponse(msg, "An unknown error occurred with the Overwatch API. Maybe tell someone about this...")
+                // https://owapi.slim.ovh/api/v3/u/IHATEAAMIR-2369/blob the fuck do we do about this
+                sendErrorResponse(msg, "An API error occured! Seems like this account has never played competitive?")
             } else if (!body.hasOwnProperty("eu") && body.eu.stats.competitive.overall_stats.comprank === null) {
                 sendErrorResponse(msg, "Your account is unplaced. Please finish your placements and then try again.");
             } else {
