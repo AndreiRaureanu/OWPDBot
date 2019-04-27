@@ -41,7 +41,7 @@ module.exports = class AddCommand extends Command {
         //prepare the request from the API for the sr
         var reqBattletag = battletag.replace(/#/g, "-");
         var options = {
-            url: `https://owapi.net/api/v3/u/${reqBattletag}/blob`,
+            url: `https://owapi.slim.ovh/api/v3/u/${reqBattletag}/blob`,
             headers: {
                 'User-Agent': 'OWPDrequest'
             }
@@ -50,7 +50,7 @@ module.exports = class AddCommand extends Command {
         function callback(error, response, body) {
             body = JSON.parse(body);
             if (body.mgs == "profile not found") {
-                return msg.say("No profile found with specified battletag.")
+                sendErrorResponse(msg, "No profile found with specified battletag.");
             }
             if (body.error == "Private") {
                 return msg.say("Private profile, please make your career profile public, wait a few minutes and try again.")
@@ -83,5 +83,12 @@ module.exports = class AddCommand extends Command {
         // setLeaderboard.run(leaderboard);
         // // need to return something btw
         // return msg.say(`shit works i guess`);
+        function sendErrorResponse(msg, text) {
+            msg.channel.send({embed: {
+                color: 3447003,
+                title: "An error occured!",
+                description: text
+            }
+        }
     }
 }

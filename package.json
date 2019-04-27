@@ -13,6 +13,7 @@
     "discord.js": "^11.4.2",
     "discord.js-commando": "^0.10.0",
     "eslint": "^5.16.0",
+    "nodaemon": "0.0.5",
     "node-gyp": "^4.0.0",
     "request": "^2.88.0"
   },
