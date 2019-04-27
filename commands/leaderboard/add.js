@@ -75,7 +75,7 @@ module.exports = class AddCommand extends Command {
                 setLeaderboard.run(leaderboard);
                 // need to return something btw
                 msg.channel.stopTyping();
-                return msg.say(`shit works i guess`);
+                sendSuccessResponse(msg, leaderboard)
             }
         }
         request(options, callback);
@@ -98,6 +98,37 @@ module.exports = class AddCommand extends Command {
                 }
             })
             msg.channel.stopTyping();
+        }
+
+        function sendSuccessResponse(msg, leaderboard) {
+            msg.channel.send({
+                embed: {
+                    color: 4159791,
+                    title: `Successfully added ${leaderboard.battletag} to the leaderboard`,
+                    fields: [
+                        {
+                            "name": "Battletag",
+                            "value": leaderboard.battletag,
+                            "inline": true
+                        },
+                        {
+                            "name": "User",
+                            "value": `<@${leaderboard.id}>`,
+                            "inline": true
+                        },
+                        {
+                            "name": "SR",
+                            "value": leaderboard.sr,
+                            "inline": true
+                        },
+                        {
+                            "name": "Region",
+                            "value": ":flag_eu:",
+                            "inline": true
+                        }
+                    ]
+                }
+            })
         }
     }
 }
