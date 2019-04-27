@@ -17,7 +17,7 @@ client.registry
     ])
     .registerDefaultGroups()
     .registerDefaultCommands()
-    .registerCommandsIn(path.join(__dirname, 'commands'));
+    .registerCommandsIn(path.join(__dirname, 'commands')); 
 
 client.on('ready', () =>{
     const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='leaderboard';").get();

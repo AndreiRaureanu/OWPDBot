@@ -1,7 +1,7 @@
 const {Command} = require('discord.js-commando');
 const {RichEmbed} = require('discord.js');
 const SQLite = require("better-sqlite3");
-const sql = new SQLite('./scores.sqlite');
+const sql = SQLite('./leaderboard.sqlite');
 
 module.exports = class SetFlagCommand extends Command {
     constructor(client) {
