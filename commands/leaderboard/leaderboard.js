@@ -18,16 +18,32 @@ module.exports = class LeaderboardCommand extends Command {
 
     run(msg) {
         const leaderboard = sql.prepare("SELECT * FROM leaderboard ORDER BY sr DESC;").all();
-        const embed = new RichEmbed()
+        var embed = new RichEmbed()
             .setTitle("Leaderboard")
             .setDescription("OWPD Leaderboard")
             .setColor(0x00AE86);
         var i = 1;
-        leaderboard.iterate
+        var tempBody = "";
+        var characterCount = 0;
+
         for (const data of leaderboard) {
-            embed.addField(`${i}  ${data.user}`, `${data.battletag}, ${data.sr}, ${data.nickname}`);
-            i++;
+            var nextLine = `#${i}. ${data.flag} **${data.battletag}** [${data.sr}] (${data.nickname})` + '\n';
+            characterCount += nextLine.length;
+            if (tempBody.length + nextLine.length>= 1000) {
+                embed.addField(" ឵឵ ឵឵", tempBody)
+                tempBody = "";
+            } else {
+                tempBody += nextLine;
+            }
+            if (characterCount > 5700) {
+                msg.channel.send({ embed });
+                characterCount = 0;
+                embed = new RichEmbed()
+                    .setColor(0x00AE86);
+            }
+           i++;
         }
+        embed.addField(" ឵឵ ឵឵", tempBody)
         i = 0;
         return msg.channel.send({ embed });
     }

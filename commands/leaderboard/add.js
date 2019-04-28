@@ -13,24 +13,33 @@ module.exports = class AddCommand extends Command {
             description: 'Add a user to the leaderboards',
             guildOnly: true,
             userPermissions: ['MANAGE_MESSAGES'],
-            examples: ['add @User battletag'],
-            args: [{
-                key: 'member',
-                prompt: 'Which user do you want to add?',
-                type: 'member'
-            },
+            examples: ['add battletag flag nickname'],
+            args: [
             {
                 key: 'battletag',
                 prompt: 'What is the battletag of the user',
                 type: 'string'
+            },
+            {
+                key: 'flag',
+                prompt: 'What is your country flag',
+                type: 'string',
+                default: ':map:'
+            },
+            {
+                key: 'nickname',
+                prompt: 'What is your nickname',
+                type: 'string',
+                default: ''
             }
             ]
         });
     }
 
-    run(msg, { member, battletag }) {
+    run(msg, { battletag, flag, nickname }) {
         //prepared statements 
         const setLeaderboard = sql.prepare("INSERT OR REPLACE INTO leaderboard (id, user, battletag, sr, flag, nickname) VALUES (@id, @user, @battletag, @sr, @flag, @nickname);");
+        const setLeaderboardMultiple = sql.prepare("INSERT OR REPLACE INTO leaderboard (id, user, battletag, sr, flag, nickname) VALUES (@id, @user, @battletag, @sr, @flag, @nickname);");
         const getLeaderboard = sql.prepare("SELECT * FROM leaderboard WHERE user = ?")
 
         //first check if its valid battletag format through regex
@@ -49,6 +58,10 @@ module.exports = class AddCommand extends Command {
             }
         };
 
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * Math.floor(max));
+          }
+
         //parse the response
         function callback(error, response, body) {
             body = JSON.parse(body);
@@ -61,20 +74,29 @@ module.exports = class AddCommand extends Command {
             } else if (body.eu.stats.competitive.overall_stats.comprank === null) {
                 sendErrorResponse(msg, "Your account is unplaced. Please finish your placements and then try again.");
             } else {
-                var leaderboard = getLeaderboard.get(member.user.id);
+                var leaderboard = getLeaderboard.get(msg.author.id);
                 if (!leaderboard) {
                     leaderboard = {
-                        id: member.user.id,
-                        user: member.user.id,
+                        id: getRandomInt(Number.MAX_SAFE_INTEGER),
+                        user: msg.author.id,
                         battletag: battletag,
                         sr: 0,
-                        flag: `:map:`,
-                        nickname: `default`
+                        flag: flag,
+                        nickname: nickname
+                    }
+                } else {
+                    leaderboard = {
+                        id: getRandomInt(Number.MAX_SAFE_INTEGER),
+                        user: msg.author.id,
+                        battletag: battletag,
+                        sr: 0,
+                        flag: flag,
+                        nickname: nickname
                     }
                 }
 
                 leaderboard.sr = body.eu.stats.competitive.overall_stats.comprank;
-                setLeaderboard.run(leaderboard);
+                setLeaderboardMultiple.run(leaderboard);
                 // need to return something btw
                 sendSuccessResponse(msg, leaderboard);
             }
@@ -104,7 +126,7 @@ module.exports = class AddCommand extends Command {
                         },
                         {
                             "name": "User",
-                            "value": `<@${leaderboard.id}>`,
+                            "value": `<@${leaderboard.user}>`,
                             "inline": true
                         },
                         {
