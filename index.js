@@ -32,4 +32,6 @@ client.on('ready', () =>{
     console.log("Logged in!");
 })
 
+client.on('error', console.error);
+
 client.login('NDY3MDY4NTkwNzIyNjQ2MDM2.DioXwA.RkSTbXEQ-Vi8sGb5RWKcUc60psU');
