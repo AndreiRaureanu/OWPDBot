@@ -42,7 +42,7 @@ module.exports = class AddCommand extends Command {
         //prepared statements 
         const setLeaderboard = sql.prepare("INSERT OR REPLACE INTO leaderboard (id, user, battletag, sr, flag, nickname) VALUES (@id, @user, @battletag, @sr, @flag, @nickname);");
         const setLeaderboardMultiple = sql.prepare("INSERT OR REPLACE INTO leaderboard (id, user, battletag, sr, flag, nickname) VALUES (@id, @user, @battletag, @sr, @flag, @nickname);");
-        const getLeaderboard = sql.prepare("SELECT * FROM leaderboard WHERE user = ?")
+        const getLeaderboard = sql.prepare("SELECT * FROM leaderboard WHERE battletag = ?")
 
         //first check if its valid battletag format through regex
         const test4Characters = RegExp('/.*#[0-9]{4}');
@@ -74,7 +74,7 @@ module.exports = class AddCommand extends Command {
             } else if (body.rating == 0) {
                 sendErrorResponse(msg, "Your account is unplaced. Please finish your placements and then try again.");
             } else {
-                var leaderboard = getLeaderboard.get(msg.author.id);
+                var leaderboard = getLeaderboard.get(battletag);
                 if (!leaderboard) {
                     leaderboard = {
                         id: getRandomInt(Number.MAX_SAFE_INTEGER),
@@ -84,21 +84,13 @@ module.exports = class AddCommand extends Command {
                         flag: flag,
                         nickname: nickname
                     }
+                    leaderboard.sr = body.rating;
+                    setLeaderboardMultiple.run(leaderboard);
+                    // need to return something btw
+                    sendSuccessResponse(msg, leaderboard);
                 } else {
-                    leaderboard = {
-                        id: getRandomInt(Number.MAX_SAFE_INTEGER),
-                        user: msg.author.id,
-                        battletag: battletag,
-                        sr: 0,
-                        flag: flag,
-                        nickname: nickname
-                    }
+                    sendErrorResponse(msg, "Battletag already added to the leaderboard.");
                 }
-
-                leaderboard.sr = body.rating;
-                setLeaderboardMultiple.run(leaderboard);
-                // need to return something btw
-                sendSuccessResponse(msg, leaderboard);
             }
             msg.channel.stopTyping();
         }

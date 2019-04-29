@@ -43,7 +43,11 @@ module.exports = class LeaderboardCommand extends Command {
             }
            i++;
         }
-        embed.addField(" ឵឵ ឵឵", tempBody)
+        if (tempBody === "") {
+            embed.setDescription("The leaderboard is empty! Add some battletags with `ow!add`");
+        } else {
+            embed.addField(" ឵឵ ឵឵", tempBody);
+        }
         i = 0;
         return msg.channel.send({ embed });
     }
