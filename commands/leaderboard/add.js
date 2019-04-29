@@ -37,6 +37,8 @@ module.exports = class AddCommand extends Command {
     }
 
     run(msg, { battletag, flag, nickname }) {
+        msg.channel.startTyping();
+
         //prepared statements 
         const setLeaderboard = sql.prepare("INSERT OR REPLACE INTO leaderboard (id, user, battletag, sr, flag, nickname) VALUES (@id, @user, @battletag, @sr, @flag, @nickname);");
         const setLeaderboardMultiple = sql.prepare("INSERT OR REPLACE INTO leaderboard (id, user, battletag, sr, flag, nickname) VALUES (@id, @user, @battletag, @sr, @flag, @nickname);");
@@ -98,6 +100,7 @@ module.exports = class AddCommand extends Command {
                 // need to return something btw
                 sendSuccessResponse(msg, leaderboard);
             }
+            msg.channel.stopTyping();
         }
         request(options, callback);
 
