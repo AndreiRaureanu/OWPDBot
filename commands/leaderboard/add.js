@@ -128,7 +128,7 @@ module.exports = class AddCommand extends Command {
                         },
                         {
                             "name": "Region",
-                            "value": ":flag_eu:",
+                            "value": leaderboard.flag,
                             "inline": true
                         }
                     ]

@@ -15,8 +15,8 @@ client.registry
     .registerGroups([
         ['leaderboard', 'Leaderboard Related Command Group']
     ])
-    .registerDefaultGroups()
-    .registerDefaultCommands()
+    // .registerDefaultGroups()
+    // .registerDefaultCommands()
     .registerCommandsIn(path.join(__dirname, 'commands')); 
 
 client.on('ready', () =>{
