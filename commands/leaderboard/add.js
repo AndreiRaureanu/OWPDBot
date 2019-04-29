@@ -52,7 +52,7 @@ module.exports = class AddCommand extends Command {
         //prepare the request from the API for the sr
         var reqBattletag = battletag.replace(/#/g, "-");
         var options = {
-            url: `https://owapi.slim.ovh/api/v3/u/${reqBattletag}/blob`,
+            url: `https://owapi.slim.ovh/stats/pc/eu/${reqBattletag}`,
             headers: {
                 'User-Agent': 'OWPDrequest'
             }
@@ -65,13 +65,11 @@ module.exports = class AddCommand extends Command {
         //parse the response
         function callback(error, response, body) {
             body = JSON.parse(body);
-            if (body.msg == "profile not found") {
+            if (body.message == "Player not found") {
                 sendErrorResponse(msg, "No profile found with specified Battletag!");
-            } else if (body.error == "Private") {
+            } else if (body.private) {
                 sendErrorResponse(msg, "Private profile, please make your career profile public, wait a few minutes and try again.");
-            } else if (body.error == 500) {
-                sendErrorResponse(msg, "An API error occured! Seems like this account has never played competitive?")
-            } else if (body.eu.stats.competitive.overall_stats.comprank === null) {
+            } else if (body.rating == 0) {
                 sendErrorResponse(msg, "Your account is unplaced. Please finish your placements and then try again.");
             } else {
                 var leaderboard = getLeaderboard.get(msg.author.id);
@@ -95,7 +93,7 @@ module.exports = class AddCommand extends Command {
                     }
                 }
 
-                leaderboard.sr = body.eu.stats.competitive.overall_stats.comprank;
+                leaderboard.sr = body.rating;
                 setLeaderboardMultiple.run(leaderboard);
                 // need to return something btw
                 sendSuccessResponse(msg, leaderboard);
