@@ -11,7 +11,6 @@ module.exports = class SetNicknameCommand extends Command {
             memberName: 'setnickname',
             description: 'Sets a nickname for a user',
             guildOnly: true,
-            userPermissions: ['MANAGE_MESSAGES'],
             examples: ['setnickname @User nickname'],
             args: [
                 {

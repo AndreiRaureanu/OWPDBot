@@ -12,7 +12,6 @@ module.exports = class AddCommand extends Command {
             memberName: 'add',
             description: 'Add a user to the leaderboards',
             guildOnly: true,
-            userPermissions: ['MANAGE_MESSAGES'],
             examples: ['add battletag flag nickname'],
             args: [
             {

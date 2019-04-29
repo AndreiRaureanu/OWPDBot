@@ -11,7 +11,6 @@ module.exports = class InspectCommand extends Command {
             memberName: 'inspect',
             description: 'Displays all the battletags associated to a user',
             guildOnly: true,
-            userPermissions: ['MANAGE_MESSAGES'],
             examples: ['inspect @User'],
             args: [
                 {
