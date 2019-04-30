@@ -30,6 +30,9 @@ module.exports = class SetFlagCommand extends Command {
 
     run(msg, {member, flag}) {
         // need to return something btw
-        
+        // btw you need to add all the flagz
+        // beta cuck
+        // do it faster
+        // andrei you suck
     }
 }

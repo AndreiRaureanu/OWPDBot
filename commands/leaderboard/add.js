@@ -40,7 +40,7 @@ module.exports = class AddCommand extends Command {
 
         //prepared statements 
         const setLeaderboard = sql.prepare("INSERT OR REPLACE INTO leaderboard (id, user, battletag, sr, flag, nickname) VALUES (@id, @user, @battletag, @sr, @flag, @nickname);");
-        const setLeaderboardMultiple = sql.prepare("INSERT OR REPLACE INTO leaderboard (id, user, battletag, sr, flag, nickname) VALUES (@id, @user, @battletag, @sr, @flag, @nickname);");
+        const setLeaderboardMultiple = sql.prepare("INSERT OR REPLACE INTO leaderboard (id, user, battletag, sr, flag, nickname, privateCounter) VALUES (@id, @user, @battletag, @sr, @flag, @nickname, @privateCounter);");
         const getLeaderboard = sql.prepare("SELECT * FROM leaderboard WHERE battletag = ?")
 
         //first check if its valid battletag format through regex
@@ -67,11 +67,14 @@ module.exports = class AddCommand extends Command {
         function callback(error, response, body) {
             body = JSON.parse(body);
             if (body.message == "Player not found") {
-                sendErrorResponse(msg, "No profile found with specified Battletag!");
+                msg.channel.stopTyping();
+                return sendErrorResponse(msg, "No profile found with specified Battletag!");
             } else if (body.private) {
-                sendErrorResponse(msg, "Private profile, please make your career profile public, wait a few minutes and try again.");
+                msg.channel.stopTyping();
+                return sendErrorResponse(msg, "Private profile, please make your career profile public, wait a few minutes and try again.");
             } else if (body.rating == 0) {
-                sendErrorResponse(msg, "Your account is unplaced. Please finish your placements and then try again.");
+                msg.channel.stopTyping();
+                return sendErrorResponse(msg, "Your account is unplaced. Please finish your placements and then try again.");
             } else {
                 var leaderboard = getLeaderboard.get(battletag);
                 if (!leaderboard) {
@@ -81,17 +84,19 @@ module.exports = class AddCommand extends Command {
                         battletag: battletag,
                         sr: 0,
                         flag: flag,
-                        nickname: nickname
+                        nickname: nickname,
+                        privateCounter: 0
                     }
                     leaderboard.sr = body.rating;
                     setLeaderboardMultiple.run(leaderboard);
                     // need to return something btw
-                    sendSuccessResponse(msg, leaderboard);
+                    msg.channel.stopTyping();
+                    return sendSuccessResponse(msg, leaderboard);
                 } else {
-                    sendErrorResponse(msg, "Battletag already added to the leaderboard.");
+                    msg.channel.stopTyping();
+                    return sendErrorResponse(msg, "Battletag already added to the leaderboard.");
                 }
             }
-            msg.channel.stopTyping();
         }
         request(options, callback);
 

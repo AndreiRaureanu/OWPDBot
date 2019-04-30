@@ -29,9 +29,9 @@ module.exports = class RemoveCommand extends Command {
         const getBattletag = sql.prepare(`SELECT * FROM leaderboard WHERE battletag = '${battletag}';`).get();
         if(getBattletag) {
             removeBattletag.run();
-            successResponse(msg, battletag);
+            return successResponse(msg, battletag);
         } else {
-            errorResponse(msg, battletag);
+            return errorResponse(msg, battletag);
         }
 
         function successResponse(msg, btag) {

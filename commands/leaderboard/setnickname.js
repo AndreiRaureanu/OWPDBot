@@ -11,13 +11,8 @@ module.exports = class SetNicknameCommand extends Command {
             memberName: 'setnickname',
             description: 'Sets a nickname for a user',
             guildOnly: true,
-            examples: ['setnickname @User nickname'],
+            examples: ['setnickname nickname'],
             args: [
-                {
-                    key: 'member',
-                    prompt: 'Which user do you want to set a nickname?',
-                    type: 'member'
-                },
                 {
                     key: 'nickname',
                     prompt: 'What is the nickname you want to set?',
@@ -27,8 +22,34 @@ module.exports = class SetNicknameCommand extends Command {
         });
     }
 
-    run(msg, {member, nickname}) {
-        // need to return something btw
-        
+    run(msg, {nickname}) {
+        const battletagsUser = sql.prepare(`SELECT * FROM leaderboard WHERE user = ${msg.author.id};`).all();
+        const updateNickname = sql.prepare(`UPDATE leaderboard SET nickname = ? WHERE battletag = ?;`);
+        if(!battletagsUser) {
+            return sendErrorResponse(msg, `No battletags exist for user <@${msg.author.id}>`)
+        }
+
+        for (const data of battletagsUser) {
+            updateNickname.run(nickname, data.battletag);
+        }
+        return successResponse(msg, "Succesfull!");
+
+        function sendErrorResponse(msg, text) {
+            msg.channel.send({
+                embed: {
+                    color: 12663868,
+                    title: "An error occured!",
+                    description: text
+                }
+            })
+        }
+
+        function successResponse(msg, btag) {
+            const embed = new RichEmbed()
+                .setTitle("Sucess!")
+                .setDescription(`Successfully updated <@${msg.author.id}> with new nickname ${nickname}. :wave:`)
+                .setColor(0x00AE86);
+            msg.channel.send({embed})
+        }
     }
 }

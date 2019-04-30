@@ -26,7 +26,7 @@ module.exports = class HelpCommand extends Command {
             .addField("ow!setnickname", "Sets a nickname for your profile.\nUsage: `ow!setnickname SlimShady!`")
             .setFooter("Created with ❤️ by SlimShadyIAm#9999 and ElDonte#0002 :)")
             .setColor(0xFA9C1D);
-        msg.channel.send({embed});
+        return msg.channel.send({embed});
     }
    
 }
