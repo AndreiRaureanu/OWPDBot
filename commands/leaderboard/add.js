@@ -65,9 +65,12 @@ module.exports = class AddCommand extends Command {
 
         //parse the response
         function callback(error, response, body) { 
-            if (error.code == 'ENOTFOUND') {
-                msg.channel.stopTyping();
-                return sendErrorResponse(msg, "Looks like the API is down. Please try again later.")
+            
+            if (error) {
+                if (error.code == 'ENOTFOUND') {
+                    msg.channel.stopTyping();
+                    return sendErrorResponse(msg, "Looks like the API is down. Please try again later.")
+                }
             } else {
                 body = JSON.parse(body);
                 if (body.message == "Player not found") {

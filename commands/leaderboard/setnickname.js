@@ -25,7 +25,6 @@ module.exports = class SetNicknameCommand extends Command {
     run(msg, {nickname}) {
         const battletagsUser = sql.prepare(`SELECT COUNT(*) FROM leaderboard WHERE user = ${msg.author.id};`).all();
         const updateNickname = sql.prepare(`UPDATE leaderboard SET nickname = ? WHERE user = ${msg.author.id};`);
-    console.log(battletagsUser)
             if (battletagsUser[0]['COUNT(*)'] == 0) {
                 return sendErrorResponse(msg);
             } else {
@@ -33,17 +32,6 @@ module.exports = class SetNicknameCommand extends Command {
                 return successResponse(msg);
             }
         
-
-        function sendErrorResponse(msg, text) {
-            msg.channel.send({
-                embed: {
-                    color: 12663868,
-                    title: "An error occured!",
-                    description: text
-                }
-            })
-        }
-
         function successResponse(msg) {
             const embed = new RichEmbed()
                 .setTitle("Sucess!")

@@ -52,9 +52,11 @@ client.on('ready', () =>{
             console.log(reqBattletag)
             request(options, callback);
             function callback(error, response, body) {
-                if (error.code == 'ENOTFOUND') {
-                    msg.channel.stopTyping();
-                    return sendErrorResponse(msg, "Looks like the API is down. Please try again later.")
+                if (error) {
+                    if (error.code == 'ENOTFOUND') {
+                        msg.channel.stopTyping();
+                        return sendErrorResponse(msg, "Looks like the API is down. Please try again later.")
+                    } 
                 } else {
                     body = JSON.parse(body);
                     console.log(body)
