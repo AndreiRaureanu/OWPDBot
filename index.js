@@ -52,18 +52,23 @@ client.on('ready', () =>{
             console.log(reqBattletag)
             request(options, callback);
             function callback(error, response, body) {
-                body = JSON.parse(body);
-                console.log(body)
-                if (!body.private || body.rating != 0) {
-                    console.log(`Updated battletag ${body.name} to sr ${body.rating}`)
-                    updateThisRow.run(body.rating, body.name);
+                if (error.code == 'ENOTFOUND') {
+                    msg.channel.stopTyping();
+                    return sendErrorResponse(msg, "Looks like the API is down. Please try again later.")
                 } else {
-                    data.privateCounter++;
-                    incrementInactivity.run(data.privateCounter, data.battletag);
-                }
-                if (data.privateCounter == 2) {
-                    removeBattletag.run(data.battletag);
-                    console.log(`Removed ${data.battletag} for being private/unplaced for too long!`)
+                    body = JSON.parse(body);
+                    console.log(body)
+                    if (!body.private || body.rating != 0) {
+                        console.log(`Updated battletag ${body.name} to sr ${body.rating}`)
+                        updateThisRow.run(body.rating, body.name);
+                    } else {
+                        data.privateCounter++;
+                        incrementInactivity.run(data.privateCounter, data.battletag);
+                    }
+                    if (data.privateCounter == 2) {
+                        removeBattletag.run(data.battletag);
+                        console.log(`Removed ${data.battletag} for being private/unplaced for too long!`)
+                    }
                 }
             }
         }

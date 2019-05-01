@@ -64,37 +64,42 @@ module.exports = class AddCommand extends Command {
           }
 
         //parse the response
-        function callback(error, response, body) {
-            body = JSON.parse(body);
-            if (body.message == "Player not found") {
+        function callback(error, response, body) { 
+            if (error.code == 'ENOTFOUND') {
                 msg.channel.stopTyping();
-                return sendErrorResponse(msg, "No profile found with specified Battletag!");
-            } else if (body.private) {
-                msg.channel.stopTyping();
-                return sendErrorResponse(msg, "Private profile, please make your career profile public, wait a few minutes and try again.");
-            } else if (body.rating == 0) {
-                msg.channel.stopTyping();
-                return sendErrorResponse(msg, "Your account is unplaced. Please finish your placements and then try again.");
+                return sendErrorResponse(msg, "Looks like the API is down. Please try again later.")
             } else {
-                var leaderboard = getLeaderboard.get(battletag);
-                if (!leaderboard) {
-                    leaderboard = {
-                        id: getRandomInt(Number.MAX_SAFE_INTEGER),
-                        user: msg.author.id,
-                        battletag: battletag,
-                        sr: 0,
-                        flag: flag,
-                        nickname: nickname,
-                        privateCounter: 0
-                    }
-                    leaderboard.sr = body.rating;
-                    setLeaderboardMultiple.run(leaderboard);
-                    // need to return something btw
+                body = JSON.parse(body);
+                if (body.message == "Player not found") {
                     msg.channel.stopTyping();
-                    return sendSuccessResponse(msg, leaderboard);
+                    return sendErrorResponse(msg, "No profile found with specified Battletag!");
+                } else if (body.private) {
+                    msg.channel.stopTyping();
+                    return sendErrorResponse(msg, "Private profile, please make your career profile public, wait a few minutes and try again.");
+                } else if (body.rating == 0) {
+                    msg.channel.stopTyping();
+                    return sendErrorResponse(msg, "Your account is unplaced. Please finish your placements and then try again.");
                 } else {
-                    msg.channel.stopTyping();
-                    return sendErrorResponse(msg, "Battletag already added to the leaderboard.");
+                    var leaderboard = getLeaderboard.get(battletag);
+                    if (!leaderboard) {
+                        leaderboard = {
+                            id: getRandomInt(Number.MAX_SAFE_INTEGER),
+                            user: msg.author.id,
+                            battletag: battletag,
+                            sr: 0,
+                            flag: flag,
+                            nickname: nickname,
+                            privateCounter: 0
+                        }
+                        leaderboard.sr = body.rating;
+                        setLeaderboardMultiple.run(leaderboard);
+                        // need to return something btw
+                        msg.channel.stopTyping();
+                        return sendSuccessResponse(msg, leaderboard);
+                    } else {
+                        msg.channel.stopTyping();
+                        return sendErrorResponse(msg, "Battletag already added to the leaderboard.");
+                    }
                 }
             }
         }
