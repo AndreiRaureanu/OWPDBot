@@ -23,16 +23,16 @@ module.exports = class SetNicknameCommand extends Command {
     }
 
     run(msg, {nickname}) {
-        const battletagsUser = sql.prepare(`SELECT * FROM leaderboard WHERE user = ${msg.author.id};`).all();
-        const updateNickname = sql.prepare(`UPDATE leaderboard SET nickname = ? WHERE battletag = ?;`);
-        if(!battletagsUser) {
-            return sendErrorResponse(msg, `No battletags exist for user <@${msg.author.id}>`)
-        }
-
-        for (const data of battletagsUser) {
-            updateNickname.run(nickname, data.battletag);
-        }
-        return successResponse(msg, "Succesfull!");
+        const battletagsUser = sql.prepare(`SELECT COUNT(*) FROM leaderboard WHERE user = ${msg.author.id};`).all();
+        const updateNickname = sql.prepare(`UPDATE leaderboard SET nickname = ? WHERE user = ${msg.author.id};`);
+    console.log(battletagsUser)
+            if (battletagsUser[0]['COUNT(*)'] == 0) {
+                return sendErrorResponse(msg);
+            } else {
+                updateNickname.run(nickname);
+                return successResponse(msg);
+            }
+        
 
         function sendErrorResponse(msg, text) {
             msg.channel.send({
@@ -44,12 +44,22 @@ module.exports = class SetNicknameCommand extends Command {
             })
         }
 
-        function successResponse(msg, btag) {
+        function successResponse(msg) {
             const embed = new RichEmbed()
                 .setTitle("Sucess!")
                 .setDescription(`Successfully updated <@${msg.author.id}> with new nickname ${nickname}. :wave:`)
                 .setColor(0x00AE86);
             msg.channel.send({embed})
+        }
+
+        function sendErrorResponse(msg) {
+            msg.channel.send({
+                embed: {
+                    color: 12663868,
+                    title: "An error occurred!",
+                    description: `<@${msg.author.id}> has no battletags assigned to him!`
+                }
+            })
         }
     }
 }
