@@ -58,14 +58,13 @@ module.exports = class AddCommand extends Command {
                 'User-Agent': 'OWPDrequest'
             }
         };
-
+        options.url = encodeURI(options.url);
         function getRandomInt(max) {
             return Math.floor(Math.random() * Math.floor(max));
           }
 
         //parse the response
         function callback(error, response, body) { 
-            
             if (error) {
                 if (error.code == 'ENOTFOUND') {
                     msg.channel.stopTyping();

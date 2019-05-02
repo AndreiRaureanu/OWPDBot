@@ -50,7 +50,7 @@ client.on('ready', () => {
                     'User-Agent': 'OWPDrequest'
                 }
             };
-            console.log(reqBattletag)
+            options.url = encodeURI(options.url);
             request(options, callback);
             function callback(error, response, body) {
                 if (error) {
@@ -59,7 +59,6 @@ client.on('ready', () => {
                     }
                 } else {
                     body = JSON.parse(body);
-                    console.log(body);
                     if (!body.private || body.rating != 0) {
                         console.log(`Updated battletag ${body.name} to sr ${body.rating}`)
                         updateThisRow.run(body.rating, body.name);
