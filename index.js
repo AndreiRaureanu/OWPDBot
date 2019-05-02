@@ -4,6 +4,7 @@ const SQLite = require("better-sqlite3");
 const sql = new SQLite('./leaderboard.sqlite');
 const path = require('path');
 const request = require('request');
+const { RichEmbed } = require('discord.js');
 
 const client = new CommandoClient({
     commandPrefix: 'ow!',
@@ -33,7 +34,8 @@ client.on('ready', () => {
 
     setInterval(() => {
         updateOnTimeout();
-    }, 30000);
+        postUpdateToLeaderboardChannel();
+    }, 10000);
 
     function updateOnTimeout() {
         const allRows = sql.prepare(`SELECT * FROM leaderboard;`).all();
@@ -72,6 +74,47 @@ client.on('ready', () => {
                     }
                 }
             }
+        }
+        
+    }
+    function postUpdateToLeaderboardChannel() {
+        const leaderboardChannel = client.guilds.get("525250440212774912").channels.find(channel => channel.name === 'leaderboard');
+
+        const leaderboard = sql.prepare("SELECT * FROM leaderboard ORDER BY sr DESC;").all();
+        var embed = new RichEmbed()
+            .setTitle("Leaderboard")
+            .setDescription("OWPD Leaderboard")
+            .setColor(0x00AE86);
+        var i = 1;
+        var tempBody = "";
+        var characterCount = 0;
+
+        for (const data of leaderboard) {
+            var nextLine = `#${i}. ${data.flag} **${data.battletag}** [${data.sr}] (${data.nickname})` + '\n';
+            characterCount += nextLine.length;
+            if (tempBody.length + nextLine.length>= 1000) {
+                embed.addField(" ឵឵ ឵឵", tempBody)
+                tempBody = "";
+            } else {
+                tempBody += nextLine;
+            }
+            if (characterCount > 5700) {
+                msg.channel.send({ embed });
+                characterCount = 0;
+                embed = new RichEmbed()
+                    .setColor(0x00AE86);
+            }
+           i++;
+        }
+        if (tempBody === "") {
+            embed.setDescription("The leaderboard is empty! Add some battletags with `ow!add`");
+        } else {
+            embed.addField(" ឵឵ ឵឵", tempBody);
+        }
+        i = 0;
+        if (leaderboardChannel) {
+            leaderboardChannel.bulkDelete(5).then(messages => console.log(`Bulk deleted ${messages.size} messages`)).catch(console.error);
+            return leaderboardChannel.send({ embed });
         }
     }
     // eslint-disable-next-line no-console
