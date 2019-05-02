@@ -6,6 +6,7 @@ const path = require('path');
 const request = require('request');
 const { RichEmbed } = require('discord.js');
 
+const token = process.env.owpdToken;
 const client = new CommandoClient({
     commandPrefix: 'ow!',
     owner: '265926378690576384',
@@ -123,4 +124,4 @@ client.on('ready', () => {
 
 client.on('error', console.error);
 
-client.login('NDY3MDY4NTkwNzIyNjQ2MDM2.DioXwA.RkSTbXEQ-Vi8sGb5RWKcUc60psU');
+client.login(token);
