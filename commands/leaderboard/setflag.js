@@ -25,11 +25,11 @@ module.exports = class SetFlagCommand extends Command {
     }
 
     run(msg, {flag}) {
+        var testFlag = /[\uD83C][\uDDE6-\uDDFF][\uD83C][\uDDE6-\uDDFF]/;
         const battletagsUser = sql.prepare(`SELECT COUNT(*) FROM leaderboard WHERE user = ${msg.author.id};`).all();
         const updateFlag = sql.prepare(`UPDATE leaderboard SET flag = ? WHERE user = ${msg.author.id};`);
         console.log(flag)
-        const testFlag = RegExp(`:flag_\w{2}:`);
-        if (testFlag.test(flag)) {
+        if (!testFlag.test(flag)) {
             return msg.say(`Invalid flag!`);
         } else {
             if (battletagsUser[0]['COUNT(*)'] == 0) {
