@@ -35,7 +35,7 @@ client.on('ready', () => {
     setInterval(() => {
         updateOnTimeout();
         postUpdateToLeaderboardChannel();
-    }, 10000);
+    }, 180000);
 
     function updateOnTimeout() {
         const allRows = sql.prepare(`SELECT * FROM leaderboard;`).all();
@@ -68,7 +68,7 @@ client.on('ready', () => {
                         data.privateCounter++;
                         incrementInactivity.run(data.privateCounter, data.battletag);
                     }
-                    if (data.privateCounter == 2) {
+                    if (data.privateCounter == 48) {
                         removeBattletag.run(data.battletag);
                         console.log(`Removed ${data.battletag} for being private/unplaced for too long!`);
                     }
