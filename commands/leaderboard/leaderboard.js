@@ -17,6 +17,8 @@ module.exports = class LeaderboardCommand extends Command {
     }
 
     run(msg) {
+        const leaderboardChannel = msg.guild.channels.find(channel => channel.name === 'leaderboard');
+
         const leaderboard = sql.prepare("SELECT * FROM leaderboard ORDER BY sr DESC;").all();
         var embed = new RichEmbed()
             .setTitle("Leaderboard")
@@ -49,6 +51,9 @@ module.exports = class LeaderboardCommand extends Command {
             embed.addField(" ឵឵ ឵឵", tempBody);
         }
         i = 0;
-        return msg.channel.send({ embed });
+        if (leaderboardChannel) {
+            leaderboardChannel.bulkDelete(5).then(messages => console.log(`Bulk deleted ${messages.size} messages`)).catch(console.error);
+            return leaderboardChannel.send({ embed });
+        }
     }
 }

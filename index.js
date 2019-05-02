@@ -19,11 +19,11 @@ client.registry
     ])
     // .registerDefaultGroups()
     // .registerDefaultCommands()
-    .registerCommandsIn(path.join(__dirname, 'commands')); 
+    .registerCommandsIn(path.join(__dirname, 'commands'));
 
-client.on('ready', () =>{
+client.on('ready', () => {
     const table = sql.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='leaderboard';").get();
-    if(!table['count(*)']) {
+    if (!table['count(*)']) {
         // no table exists, create one and setup the database properly
         sql.prepare("CREATE TABLE leaderboard (id TEXT PRIMARY KEY, user TEXT, battletag TEXT, sr INTEGER, flag TEXT, nickname TEXT, privateCounter INTEGER);").run();
         sql.prepare("CREATE UNIQUE INDEX idx_leaderboard_id ON leaderboard (id);").run();
@@ -40,7 +40,8 @@ client.on('ready', () =>{
         const updateThisRow = sql.prepare(`UPDATE leaderboard SET sr = ? WHERE battletag = ?;`);
         const incrementInactivity = sql.prepare(`UPDATE leaderboard SET privateCounter = ? WHERE battletag = ?;`);
         const removeBattletag = sql.prepare(`DELETE FROM leaderboard WHERE battletag = ?;`);
-        
+
+
         for (const data of allRows) {
             var reqBattletag = data.battletag.replace(/#/g, "-");
             var options = {
@@ -54,12 +55,11 @@ client.on('ready', () =>{
             function callback(error, response, body) {
                 if (error) {
                     if (error.code == 'ENOTFOUND') {
-                        msg.channel.stopTyping();
-                        return sendErrorResponse(msg, "Looks like the API is down. Please try again later.")
-                    } 
+                        console.log("Looks like the API is down. Please try again later.");
+                    }
                 } else {
                     body = JSON.parse(body);
-                    console.log(body)
+                    console.log(body);
                     if (!body.private || body.rating != 0) {
                         console.log(`Updated battletag ${body.name} to sr ${body.rating}`)
                         updateThisRow.run(body.rating, body.name);
@@ -69,7 +69,7 @@ client.on('ready', () =>{
                     }
                     if (data.privateCounter == 2) {
                         removeBattletag.run(data.battletag);
-                        console.log(`Removed ${data.battletag} for being private/unplaced for too long!`)
+                        console.log(`Removed ${data.battletag} for being private/unplaced for too long!`);
                     }
                 }
             }
