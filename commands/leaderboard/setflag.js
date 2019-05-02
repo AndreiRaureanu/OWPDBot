@@ -28,12 +28,11 @@ module.exports = class SetFlagCommand extends Command {
         var testFlag = /[\uD83C][\uDDE6-\uDDFF][\uD83C][\uDDE6-\uDDFF]/;
         const battletagsUser = sql.prepare(`SELECT COUNT(*) FROM leaderboard WHERE user = ${msg.author.id};`).all();
         const updateFlag = sql.prepare(`UPDATE leaderboard SET flag = ? WHERE user = ${msg.author.id};`);
-        console.log(flag)
         if (!testFlag.test(flag)) {
-            return msg.say(`Invalid flag!`);
+            return sendErrorResponse(msg, "Invalid flag! Make sure you use a country flag emoji.")
         } else {
             if (battletagsUser[0]['COUNT(*)'] == 0) {
-                return sendErrorResponse(msg);
+                return sendErrorResponse(msg, `<@${msg.author.id}> has no battletags assigned to him!`);
             } else {
                 updateFlag.run(flag);
                 return successResponse(msg);
@@ -47,12 +46,12 @@ module.exports = class SetFlagCommand extends Command {
                 msg.channel.send({embed})
             }
     
-            function sendErrorResponse(msg) {
+            function sendErrorResponse(msg, err) {
                 msg.channel.send({
                     embed: {
                         color: 12663868,
                         title: "An error occurred!",
-                        description: `<@${msg.author.id}> has no battletags assigned to him!`
+                        description: err
                     }
                 })
             }
