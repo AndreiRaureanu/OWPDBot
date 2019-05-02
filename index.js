@@ -59,7 +59,7 @@ client.on('ready', () => {
                     }
                 } else {
                     body = JSON.parse(body);
-                    if (!body.private || body.rating != 0) {
+                    if (!body.private && body.rating != 0) {
                         console.log(`Updated battletag ${body.name} to sr ${body.rating}`)
                         updateThisRow.run(body.rating, body.name);
                     } else {
