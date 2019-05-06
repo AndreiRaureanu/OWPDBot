@@ -7,23 +7,29 @@ const sql = SQLite('./leaderboard.sqlite');
 module.exports = class AddCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'add',
+            name: 'adminadd',
             group: 'leaderboard',
-            memberName: 'add',
+            memberName: 'adminadd',
             description: 'Add a user to the leaderboards',
+            userPermissions: ['MANAGE_ROLES'],
             guildOnly: true,
-            examples: ['add battletag'],
+            examples: ['adminadd battletag @User'],
             args: [
                 {
                     key: 'battletag',
                     prompt: 'What is the battletag of the user',
                     type: 'string'
+                },
+                {
+                    key: 'member',
+                    prompt: 'Which user do you want to add to the leaderboard?',
+                    type: 'member'
                 }
             ]
         });
     }
 
-    run(msg, { battletag }) {
+    run(msg, { battletag, member }) {
         msg.channel.startTyping();
 
         //prepared statements 
@@ -74,11 +80,11 @@ module.exports = class AddCommand extends Command {
                     if (!leaderboard) {
                         leaderboard = {
                             id: getRandomInt(Number.MAX_SAFE_INTEGER),
-                            user: msg.author.id,
+                            user: member.id,
                             battletag: battletag,
                             sr: 0,
                             flag: ":map:",
-                            nickname: msg.author.username,
+                            nickname: member.user.username,
                             privateCounter: 0
                         }
                         leaderboard.sr = body.rating;
