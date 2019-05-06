@@ -124,4 +124,4 @@ client.on('ready', () => {
 
 client.on('error', console.error);
 
-client.login("NDY3MDY4NTkwNzIyNjQ2MDM2.XNCyNg.W-0tfY_cUXPA0XOWCObhto3jRDU");
+client.login(token);
