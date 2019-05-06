@@ -36,7 +36,7 @@ client.on('ready', () => {
     setInterval(() => {
         updateOnTimeout();
         postUpdateToLeaderboardChannel();
-    }, 180000);
+    }, 1800000);
 
     function updateOnTimeout() {
         const allRows = sql.prepare(`SELECT * FROM leaderboard;`).all();
