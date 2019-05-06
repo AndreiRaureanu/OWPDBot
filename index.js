@@ -79,7 +79,7 @@ client.on('ready', () => {
 
     }
     function postUpdateToLeaderboardChannel() {
-        const leaderboardChannel = client.guilds.get("525250440212774912").channels.find(channel => channel.name === 'leaderboard');
+        const leaderboardChannel = client.guilds.get("483622481375002644").channels.find(channel => channel.name === 'leaderboard');
 
         const leaderboard = sql.prepare("SELECT * FROM leaderboard WHERE sr >= 4000 ORDER BY sr DESC;").all();
         var embed = new RichEmbed()
