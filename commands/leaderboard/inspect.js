@@ -1,5 +1,5 @@
-const {Command} = require('discord.js-commando');
-const {RichEmbed} = require('discord.js');
+const { Command } = require('discord.js-commando');
+const { RichEmbed } = require('discord.js');
 const SQLite = require("better-sqlite3");
 const sql = SQLite('./leaderboard.sqlite');
 
@@ -23,12 +23,12 @@ module.exports = class InspectCommand extends Command {
         });
     }
 
-    run(msg, {member}) {
-        if(member === 'myself') {
+    run(msg, { member }) {
+        if (member === 'myself') {
             member = msg.author;
         }
         const battletagsUser = sql.prepare(`SELECT * FROM leaderboard WHERE user = ${member.id};`).all();
-        
+
         var embed = new RichEmbed()
             .addField("Inspecting :spy:", `**<@${member.id}>'s profile(s)**`)
             .setColor(0x00AE86);
@@ -39,7 +39,7 @@ module.exports = class InspectCommand extends Command {
         for (const data of battletagsUser) {
             var nextLine = `#${i}. ${data.flag} **${data.battletag}** [${data.sr}] (${data.nickname})` + '\n';
             characterCount += nextLine.length;
-            if (tempBody.length + nextLine.length>= 1000) {
+            if (tempBody.length + nextLine.length >= 1000) {
                 embed.addField(" ឵឵ ឵឵", tempBody)
                 tempBody = "";
             } else {
@@ -51,7 +51,7 @@ module.exports = class InspectCommand extends Command {
                 embed = new RichEmbed()
                     .setColor(0x00AE86);
             }
-        i++;
+            i++;
         }
         if (tempBody === "") {
             var embed = new RichEmbed()

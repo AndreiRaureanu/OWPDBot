@@ -12,34 +12,21 @@ module.exports = class AddCommand extends Command {
             memberName: 'add',
             description: 'Add a user to the leaderboards',
             guildOnly: true,
-            examples: ['add battletag flag nickname'],
+            examples: ['add battletag'],
             args: [
-            {
-                key: 'battletag',
-                prompt: 'What is the battletag of the user',
-                type: 'string'
-            },
-            {
-                key: 'flag',
-                prompt: 'What is your country flag',
-                type: 'string',
-                default: ':map:'
-            },
-            {
-                key: 'nickname',
-                prompt: 'What is your nickname',
-                type: 'string',
-                default: ''
-            }
+                {
+                    key: 'battletag',
+                    prompt: 'What is the battletag of the user',
+                    type: 'string'
+                }
             ]
         });
     }
 
-    run(msg, { battletag, flag, nickname }) {
+    run(msg, { battletag }) {
         msg.channel.startTyping();
 
         //prepared statements 
-        const setLeaderboard = sql.prepare("INSERT OR REPLACE INTO leaderboard (id, user, battletag, sr, flag, nickname) VALUES (@id, @user, @battletag, @sr, @flag, @nickname);");
         const setLeaderboardMultiple = sql.prepare("INSERT OR REPLACE INTO leaderboard (id, user, battletag, sr, flag, nickname, privateCounter) VALUES (@id, @user, @battletag, @sr, @flag, @nickname, @privateCounter);");
         const getLeaderboard = sql.prepare("SELECT * FROM leaderboard WHERE battletag = ?")
 
@@ -59,12 +46,13 @@ module.exports = class AddCommand extends Command {
             }
         };
         options.url = encodeURI(options.url);
+
         function getRandomInt(max) {
             return Math.floor(Math.random() * Math.floor(max));
-          }
+        }
 
         //parse the response
-        function callback(error, response, body) { 
+        function callback(error, response, body) {
             if (error) {
                 if (error.code == 'ENOTFOUND') {
                     msg.channel.stopTyping();
@@ -89,8 +77,8 @@ module.exports = class AddCommand extends Command {
                             user: msg.author.id,
                             battletag: battletag,
                             sr: 0,
-                            flag: flag,
-                            nickname: nickname,
+                            flag: ":map:",
+                            nickname: "",
                             privateCounter: 0
                         }
                         leaderboard.sr = body.rating;
@@ -118,6 +106,7 @@ module.exports = class AddCommand extends Command {
         }
 
         function sendSuccessResponse(msg, leaderboard) {
+            console.log(`Added battletag ${leaderboard.battletag} to the leaderboard`);
             msg.channel.send({
                 embed: {
                     color: 4159791,
@@ -140,7 +129,12 @@ module.exports = class AddCommand extends Command {
                         },
                         {
                             "name": "Region",
-                            "value": leaderboard.flag,
+                            "value": "Please set your region using `!setflag <flag emoji>`",
+                            "inline": true
+                        },
+                        {
+                            "name": "Nickname",
+                            "value": "Please set your region using `!setnickname <name>`",
                             "inline": true
                         }
                     ]

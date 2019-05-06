@@ -76,7 +76,7 @@ client.on('ready', () => {
                 }
             }
         }
-        
+
     }
     function postUpdateToLeaderboardChannel() {
         const leaderboardChannel = client.guilds.get("525250440212774912").channels.find(channel => channel.name === 'leaderboard');
@@ -93,7 +93,7 @@ client.on('ready', () => {
         for (const data of leaderboard) {
             var nextLine = `#${i}. ${data.flag} **${data.battletag}** [${data.sr}] (${data.nickname})` + '\n';
             characterCount += nextLine.length;
-            if (tempBody.length + nextLine.length>= 1000) {
+            if (tempBody.length + nextLine.length >= 1000) {
                 embed.addField(" ឵឵ ឵឵", tempBody)
                 tempBody = "";
             } else {
@@ -105,7 +105,7 @@ client.on('ready', () => {
                 embed = new RichEmbed()
                     .setColor(0x00AE86);
             }
-           i++;
+            i++;
         }
         if (tempBody === "") {
             embed.setDescription("The leaderboard is empty! Add some battletags with `ow!add`");
@@ -124,4 +124,4 @@ client.on('ready', () => {
 
 client.on('error', console.error);
 
-client.login(token);
+client.login("NDY3MDY4NTkwNzIyNjQ2MDM2.DioXwA.RkSTbXEQ-Vi8sGb5RWKcUc60psU");
