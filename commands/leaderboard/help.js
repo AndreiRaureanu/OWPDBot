@@ -22,7 +22,7 @@ module.exports = class HelpCommand extends Command {
             .addField("ow!inspect", "Displays all the battletags associated to a user.\nUsage: `ow!inspect @SlimShadyIAm#9999`")
             .addField("ow!remove", "Remove a battletag from the database. ***Requires MANAGE MESSAGES permission.***\nUsage: `ow!remove SlimShadyIAm#9999`")
             .addField("ow!setflag", "Sets a country flag for your profile.\nUsage: `ow!setflag :flag_us:`")
-            .addField("ow!setnick", "Sets a nickname for your profile.\nUsage: `ow!setnickname SlimShady!`")
+            .addField("ow!setnick", "Sets a nickname for your profile.\nUsage: `ow!setnick SlimShady!`")
             .setFooter("Created with ❤️ by SlimShadyIAm#9999 and ElDonte#0002 :)")
             .setColor(0xFA9C1D);
         return msg.channel.send({ embed });
