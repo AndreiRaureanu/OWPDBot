@@ -83,8 +83,8 @@ client.on('ready', () => {
 
         const leaderboard = sql.prepare("SELECT * FROM leaderboard WHERE sr >= 4000 ORDER BY sr DESC;").all();
         var embed = new RichEmbed()
-            .setTitle("Leaderboard")
-            .setDescription("OWPD Leaderboard")
+            .setTitle("OWPD Leaderboard")
+            .setDescription("Use the command `ow!help` to get a list of commands for the leaderboard bot.\nIf you run into any problems please DM ElDonte#0002 or SlimShadyIAm#9999 on Discord.")
             .setColor(0x00AE86);
         var i = 1;
         var tempBody = "";

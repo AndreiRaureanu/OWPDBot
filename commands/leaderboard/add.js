@@ -134,7 +134,7 @@ module.exports = class AddCommand extends Command {
                         },
                         {
                             "name": "Nickname",
-                            "value": "Please set your region using `ow!setnick <name>`",
+                            "value": "Please set your nickname using `ow!setnick <name>`",
                             "inline": true
                         }
                     ]

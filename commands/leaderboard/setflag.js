@@ -12,7 +12,6 @@ module.exports = class SetFlagCommand extends Command {
             memberName: 'setflag',
             description: 'Sets a country flag for a user',
             guildOnly: true,
-            userPermissions: ['MANAGE_MESSAGES'],
             examples: ['add flag'],
             args: [
                 {
