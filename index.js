@@ -95,7 +95,7 @@ client.on('ready', () => {
             characterCount += nextLine.length;
             if (tempBody.length + nextLine.length >= 1000) {
                 embed.addField(" ឵឵ ឵឵", tempBody)
-                tempBody = "";
+                tempBody = nextLine;
             } else {
                 tempBody += nextLine;
             }
