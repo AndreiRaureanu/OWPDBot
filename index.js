@@ -54,8 +54,8 @@ client.on('ready', () => {
             uri = encodeURI(uri);
             const response = await fetch(uri).then(res => res.text());
             if ($('.masthead-permission-level-text', response).text() !== 'Private Profile' && $('.competitive-rank', response).text().substring(0, 4)) {
-                console.log(`Updated battletag ${body.name} to sr ${body.rating}`)
-                updateThisRow.run(body.rating, body.name);
+                console.log(`Updated battletag ${data.battletag} to sr ${$('.competitive-rank', response).text().substring(0, 4)}`)
+                updateThisRow.run(parseInt($('.competitive-rank', response).text().substring(0, 4)), data.battletag);
             } else {
                 data.privateCounter++;
                 incrementInactivity.run(data.privateCounter, data.battletag);
