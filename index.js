@@ -17,7 +17,8 @@ const client = new CommandoClient({
 client.registry
     .registerDefaultTypes()
     .registerGroups([
-        ['leaderboard', 'Leaderboard Related Command Group']
+        ['leaderboard', 'Leaderboard Related Command Group'],
+        ['db', 'Db Related Command Group']
     ])
     // .registerDefaultGroups()
     // .registerDefaultCommands()
@@ -38,7 +39,7 @@ client.on('ready', () => {
         postUpdateToLeaderboardChannel();
     }, 1800000);
 
-    function updateOnTimeout() {
+    async function updateOnTimeout() {
         const allRows = sql.prepare(`SELECT * FROM leaderboard;`).all();
         const updateThisRow = sql.prepare(`UPDATE leaderboard SET sr = ? WHERE battletag = ?;`);
         const incrementInactivity = sql.prepare(`UPDATE leaderboard SET privateCounter = ? WHERE battletag = ?;`);
@@ -47,44 +48,30 @@ client.on('ready', () => {
 
         for (const data of allRows) {
             var reqBattletag = data.battletag.replace(/#/g, "-");
-            var options = {
-                url: `https://owapi.slim.ovh/stats/pc/eu/${reqBattletag}`,
-                headers: {
-                    'User-Agent': 'OWPDrequest'
-                }
-            };
-            options.url = encodeURI(options.url);
-            request(options, callback);
-            function callback(error, response, body) {
-                if (error) {
-                    if (error.code == 'ENOTFOUND') {
-                        console.log("Looks like the API is down. Please try again later.");
-                    }
-                } else {
-                    body = JSON.parse(body);
-                    if (!body.private && body.rating != 0) {
-                        console.log(`Updated battletag ${body.name} to sr ${body.rating}`)
-                        updateThisRow.run(body.rating, body.name);
-                    } else {
-                        data.privateCounter++;
-                        incrementInactivity.run(data.privateCounter, data.battletag);
-                    }
-                    if (data.privateCounter == 48) {
-                        removeBattletag.run(data.battletag);
-                        console.log(`Removed ${data.battletag} for being private/unplaced for too long!`);
-                    }
-                }
+            var uri = `https://playoverwatch.com/en-us/career/pc/${reqBattletag}`;
+            uri = encodeURI(uri);
+            const response = await fetch(uri).then(res => res.text());
+            if ($('.masthead-permission-level-text', body).text() !== 'Private Profile' && $('.competitive-rank', body).text().substring(0, 4)) {
+                console.log(`Updated battletag ${body.name} to sr ${body.rating}`)
+                updateThisRow.run(body.rating, body.name);
+            } else {
+                data.privateCounter++;
+                incrementInactivity.run(data.privateCounter, data.battletag);
+            }
+            if (data.privateCounter == 48) {
+                removeBattletag.run(data.battletag);
+                console.log(`Removed ${data.battletag} for being private/unplaced for too long!`);
             }
         }
 
     }
-    function postUpdateToLeaderboardChannel() {
+    async function postUpdateToLeaderboardChannel() {
         const leaderboardChannel = client.guilds.get("483622481375002644").channels.find(channel => channel.name === 'leaderboard');
 
         const leaderboard = sql.prepare("SELECT * FROM leaderboard WHERE sr >= 4000 ORDER BY sr DESC;").all();
         var embed = new RichEmbed()
             .setTitle("OWPD Leaderboard")
-            .setDescription("Use the command `ow!help` to get a list of commands for the leaderboard bot.\nIf you run into any problems please DM ElDonte#0002 or SlimShadyIAm#9999 on Discord.")
+            .setDescription("Leaderboard updates every half an hour, private profiles will be automatically removed after 24 hours.\nUse the command `ow!help` to get a list of commands for the leaderboard bot.\nIf you run into any problems please DM ElDonte#0002 or SlimShadyIAm#9999 on Discord.")
             .setColor(0x00AE86);
         var i = 1;
         var tempBody = "";
@@ -124,4 +111,4 @@ client.on('ready', () => {
 
 client.on('error', console.error);
 
-client.login(token);
+client.login("NDY3MDY4NTkwNzIyNjQ2MDM2.DioXwA.RkSTbXEQ-Vi8sGb5RWKcUc60psU");

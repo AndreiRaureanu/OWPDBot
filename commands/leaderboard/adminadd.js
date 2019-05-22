@@ -1,8 +1,9 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
 const SQLite = require("better-sqlite3");
-const request = require('request');
 const sql = SQLite('./leaderboard.sqlite');
+const fetch = require('node-fetch');
+const $ = require('cheerio');
+
 
 module.exports = class AddCommand extends Command {
     constructor(client) {
@@ -29,7 +30,7 @@ module.exports = class AddCommand extends Command {
         });
     }
 
-    run(msg, { battletag, member }) {
+    async run(msg, { battletag, member }) {
         msg.channel.startTyping();
 
         //prepared statements 
@@ -39,67 +40,52 @@ module.exports = class AddCommand extends Command {
         //first check if its valid battletag format through regex
         const test4Characters = RegExp('/.*#[0-9]{4}');
         const test5Characters = RegExp('/.*#[0-9]{5}');
-        if (test4Characters.test(battletag) || test5Characters.test(battletag)) {
+        const test6Characters = RegExp('/.*#[0-9]{6}');
+
+        if (test4Characters.test(battletag) || test5Characters.test(battletag) || test6Characters.test(battletag)) {
             return msg.say(`Invalid battletag, please adhere to the format: Example#12345`);
         }
 
-        //prepare the request from the API for the sr
         var reqBattletag = battletag.replace(/#/g, "-");
-        var options = {
-            url: `https://owapi.slim.ovh/stats/pc/eu/${reqBattletag}`,
-            headers: {
-                'User-Agent': 'OWPDrequest'
-            }
-        };
-        options.url = encodeURI(options.url);
-
+        var uri = `https://playoverwatch.com/en-us/career/pc/${reqBattletag}`;
+        uri = encodeURI(uri);
+        const response = await fetch(uri).then(res => res.text());
         function getRandomInt(max) {
             return Math.floor(Math.random() * Math.floor(max));
         }
 
-        //parse the response
-        function callback(error, response, body) {
-            if (error) {
-                if (error.code == 'ENOTFOUND') {
-                    msg.channel.stopTyping();
-                    return sendErrorResponse(msg, "Looks like the API is down. Please try again later.")
+        if ($('.content-box h1', response).text() === "Profile Not Found") {
+            msg.channel.stopTyping();
+            return sendErrorResponse(msg, "No profile found with specified Battletag!");
+        } else if ($('.masthead-permission-level-text', response).text() === 'Private Profile') {
+            msg.channel.stopTyping();
+            return sendErrorResponse(msg, "Private profile, please make your career profile public, wait a few minutes and try again.");
+        } else if (!$('.competitive-rank', response).text().substring(0, 4)) {
+            msg.channel.stopTyping();
+            return sendErrorResponse(msg, "Your account is unplaced. Please finish your placements and then try again.");
+        } else {
+            var leaderboard = getLeaderboard.get(battletag);
+            if (!leaderboard) {
+                leaderboard = {
+                    id: getRandomInt(Number.MAX_SAFE_INTEGER),
+                    user: member.id,
+                    battletag: battletag,
+                    sr: 0,
+                    flag: ":map:",
+                    nickname: member.user.username,
+                    privateCounter: 0
                 }
+                leaderboard.sr = parseInt($('.competitive-rank', response).text().substring(0, 4));
+                setLeaderboardMultiple.run(leaderboard);
+                // need to return something btw
+                msg.channel.stopTyping();
+                return sendSuccessResponse(msg, leaderboard);
             } else {
-                body = JSON.parse(body);
-                if (body.message == "Player not found") {
-                    msg.channel.stopTyping();
-                    return sendErrorResponse(msg, "No profile found with specified Battletag!");
-                } else if (body.private) {
-                    msg.channel.stopTyping();
-                    return sendErrorResponse(msg, "Private profile, please make your career profile public, wait a few minutes and try again.");
-                } else if (body.rating == 0) {
-                    msg.channel.stopTyping();
-                    return sendErrorResponse(msg, "Your account is unplaced. Please finish your placements and then try again.");
-                } else {
-                    var leaderboard = getLeaderboard.get(battletag);
-                    if (!leaderboard) {
-                        leaderboard = {
-                            id: getRandomInt(Number.MAX_SAFE_INTEGER),
-                            user: member.id,
-                            battletag: battletag,
-                            sr: 0,
-                            flag: ":map:",
-                            nickname: member.user.username,
-                            privateCounter: 0
-                        }
-                        leaderboard.sr = body.rating;
-                        setLeaderboardMultiple.run(leaderboard);
-                        // need to return something btw
-                        msg.channel.stopTyping();
-                        return sendSuccessResponse(msg, leaderboard);
-                    } else {
-                        msg.channel.stopTyping();
-                        return sendErrorResponse(msg, "Battletag already added to the leaderboard.");
-                    }
-                }
+                msg.channel.stopTyping();
+                return sendErrorResponse(msg, "Battletag already added to the leaderboard.");
             }
         }
-        request(options, callback);
+
 
         function sendErrorResponse(msg, text) {
             msg.channel.send({
@@ -136,11 +122,6 @@ module.exports = class AddCommand extends Command {
                         {
                             "name": "Region",
                             "value": "Please set your region using `ow!setflag <flag emoji>`",
-                            "inline": true
-                        },
-                        {
-                            "name": "Nickname",
-                            "value": "Please set your region using `ow!setnick <name>`",
                             "inline": true
                         }
                     ]

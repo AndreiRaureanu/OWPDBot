@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -10,13 +11,18 @@
   "license": "ISC",
   "dependencies": {
     "better-sqlite3": "^5.4.0",
+    "cheerio": "^1.0.0-rc.3",
     "discord.js": "^11.4.2",
     "discord.js-commando": "^0.10.0",
     "emoji.json": "^12.0.0",
     "eslint": "^5.16.0",
     "nodaemon": "0.0.5",
+    "node-fetch": "^2.6.0",
     "node-gyp": "^4.0.0",
-    "request": "^2.88.0"
+    "nodemon": "^1.19.0",
+    "puppeteer": "^1.15.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
   },
   "devDependencies": {},
   "description": "A leaderboard bot for OWPD",
