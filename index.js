@@ -5,6 +5,8 @@ const sql = new SQLite('./leaderboard.sqlite');
 const path = require('path');
 const request = require('request');
 const { RichEmbed } = require('discord.js');
+const fetch = require('node-fetch');
+const $ = require('cheerio');
 
 const token = process.env.owpdToken;
 const client = new CommandoClient({
