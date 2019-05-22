@@ -51,7 +51,7 @@ client.on('ready', () => {
             var uri = `https://playoverwatch.com/en-us/career/pc/${reqBattletag}`;
             uri = encodeURI(uri);
             const response = await fetch(uri).then(res => res.text());
-            if ($('.masthead-permission-level-text', body).text() !== 'Private Profile' && $('.competitive-rank', body).text().substring(0, 4)) {
+            if ($('.masthead-permission-level-text', response).text() !== 'Private Profile' && $('.competitive-rank', response).text().substring(0, 4)) {
                 console.log(`Updated battletag ${body.name} to sr ${body.rating}`)
                 updateThisRow.run(body.rating, body.name);
             } else {
