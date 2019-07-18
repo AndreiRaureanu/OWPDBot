@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const SQLite = require("better-sqlite3");
 const sql = SQLite('./leaderboard.sqlite');
 
@@ -16,7 +16,7 @@ module.exports = class HelpCommand extends Command {
     }
 
     run(msg) {
-        const embed = new RichEmbed()
+        const embed = new MessageEmbed()
             .setTitle("Ranky McRankface's Command List")
             .addField("ow!add", "Add a user to the leaderboard.\nUsage: `ow!add SlimShadyIAm#9999`")
             .addField("ow!inspect", "Displays all the battletags associated to a user.\nUsage: `ow!inspect @SlimShadyIAm#9999`")

@@ -4,7 +4,7 @@ const SQLite = require("better-sqlite3");
 const sql = new SQLite('./leaderboard.sqlite');
 const path = require('path');
 const request = require('request');
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch');
 const $ = require('cheerio');
 
@@ -71,7 +71,7 @@ client.on('ready', () => {
         const leaderboardChannel = client.guilds.get("483622481375002644").channels.find(channel => channel.name === 'leaderboard');
 
         const leaderboard = sql.prepare("SELECT * FROM leaderboard WHERE sr >= 4000 ORDER BY sr DESC;").all();
-        var embed = new RichEmbed()
+        var embed = new MessageEmbed()
             .setTitle("OWPD Leaderboard")
             .setDescription("Leaderboard updates every half an hour, private profiles will be automatically removed after 24 hours.\nUse the command `ow!help` to get a list of commands for the leaderboard bot.\nIf you run into any problems please DM ElDonte#0002 or SlimShadyIAm#9999 on Discord.")
             .setColor(0x00AE86);
@@ -91,7 +91,7 @@ client.on('ready', () => {
             if (characterCount > 5700) {
                 msg.channel.send({ embed });
                 characterCount = 0;
-                embed = new RichEmbed()
+                embed = new MessageEmbed()
                     .setColor(0x00AE86);
             }
             i++;
@@ -113,4 +113,4 @@ client.on('ready', () => {
 
 client.on('error', console.error);
 
-client.login(token);
+client.login("NDY3MDY4NTkwNzIyNjQ2MDM2.XTAzJg.sfzqQT-rlX_CMHlVDZvgXUOlGpQ");

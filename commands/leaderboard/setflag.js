@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const SQLite = require("better-sqlite3");
 const sql = SQLite('./leaderboard.sqlite');
 var emoji = require('emoji.json')
@@ -38,7 +38,7 @@ module.exports = class SetFlagCommand extends Command {
             }
         }
         function successResponse(msg) {
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
                 .setTitle("Sucess!")
                 .setDescription(`Successfully updated <@${msg.author.id}> with new flag ${flag}. :wave:`)
                 .setColor(0x00AE86);

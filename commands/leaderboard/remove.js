@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const SQLite = require("better-sqlite3");
 const sql = SQLite('./leaderboard.sqlite');
 
@@ -35,7 +35,7 @@ module.exports = class RemoveCommand extends Command {
         }
 
         function successResponse(msg, btag) {
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
                 .setTitle("Sucess!")
                 .setDescription(`Successfully removed *${btag}* from the leaderboard. :wave:`)
                 .setColor(0x00AE86);
@@ -43,7 +43,7 @@ module.exports = class RemoveCommand extends Command {
         }
         
         function errorResponse(msg, btag) {
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
                 .setTitle("An error occurred!")
                 .setDescription(`There is no battletag *${btag}* in the leaderboard!`)
                 .setColor(0xff0000);
