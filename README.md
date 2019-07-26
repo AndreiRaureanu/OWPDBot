@@ -1,7 +1,7 @@
 # OWPDBot
 A leaderboard bot for OWPD
 
-#Setup 
+# Setup 
 First, install all the dependencies:
 ```npm install```
 
