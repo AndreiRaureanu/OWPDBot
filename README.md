@@ -1,7 +1,7 @@
 # OWPDBot
 A leaderboard bot for OWPD
 
-#Setup 
+# Setup 
 First, install all the dependencies:
 ```npm install```
 
@@ -11,7 +11,7 @@ You can do this on Linux like this:
 ```
 export owpdToken="Your Token Here"
 ```
-Fuck you if you're on Windows.
+Same process goes on Windows as well by editing the system variables and making one with your token value.
 
 Start the bot using the command
 ```nodemon```
