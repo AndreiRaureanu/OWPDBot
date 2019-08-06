@@ -75,7 +75,11 @@ module.exports = class AddCommand extends Command {
                     nickname: member.user.username,
                     privateCounter: 0
                 }
-                leaderboard.sr = parseInt($('.competitive-rank', response).text().substring(0, 4));
+                if($('.competitive-rank', response).text().length === 8) {
+                    leaderboard.sr = parseInt($('.competitive-rank', response).text().substring(0, 4));
+                } else {
+                    leaderboard.sr = parseInt($('.competitive-rank', response).text().substring(0, 3));
+                }
                 setLeaderboardMultiple.run(leaderboard);
                 // need to return something btw
                 msg.channel.stopTyping();
